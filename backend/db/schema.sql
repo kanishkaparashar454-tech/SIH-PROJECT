@@ -1,0 +1,8 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE TABLE IF NOT EXISTS districts (id SERIAL PRIMARY KEY, name TEXT NOT NULL, state TEXT, boundary GEOMETRY(MULTIPOLYGON,4326), centroid GEOMETRY(POINT,4326));
+CREATE TABLE IF NOT EXISTS roads (id SERIAL PRIMARY KEY, name TEXT NOT NULL, district_id INT REFERENCES districts(id), status TEXT NOT NULL DEFAULT 'open' CHECK(status IN ('open','at-risk','blocked')), geom GEOMETRY(LINESTRING,4326), base_risk NUMERIC DEFAULT 0, estimated_delay_minutes INT DEFAULT 0, updated_at TIMESTAMPTZ DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password_hash TEXT, role TEXT NOT NULL CHECK(role IN ('admin','field_officer')));
+CREATE TABLE IF NOT EXISTS incidents (id SERIAL PRIMARY KEY, road_id INT REFERENCES roads(id), district_id INT REFERENCES districts(id), type TEXT NOT NULL, description TEXT, latitude DOUBLE PRECISION NOT NULL, longitude DOUBLE PRECISION NOT NULL, photo_url TEXT, reported_by INT REFERENCES users(id), reported_at TIMESTAMPTZ DEFAULT NOW(), status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','verified','resolved')), status_updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+CREATE TABLE IF NOT EXISTS vehicles (id SERIAL PRIMARY KEY, truck_code TEXT UNIQUE NOT NULL, cargo_type TEXT NOT NULL, status TEXT DEFAULT 'active', current_location GEOMETRY(POINT,4326), last_seen TIMESTAMPTZ);
+CREATE TABLE IF NOT EXISTS alerts (id SERIAL PRIMARY KEY, type TEXT NOT NULL, road_id INT REFERENCES roads(id), district_id INT REFERENCES districts(id), message TEXT NOT NULL, severity TEXT DEFAULT 'medium', created_at TIMESTAMPTZ DEFAULT NOW(), acknowledged_at TIMESTAMPTZ);
+CREATE INDEX IF NOT EXISTS roads_geom_idx ON roads USING GIST(geom);

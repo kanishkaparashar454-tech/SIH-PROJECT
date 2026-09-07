@@ -1,0 +1,1 @@
+const repo=require('../models/repository');const {sendNotification}=require('./notificationService'); async function createRoadAlert(road,message,severity='high'){const alert=(await repo.alerts.create(['ROAD_STATUS_CHANGE',road.id,road.district_id,message,severity])).rows[0];sendNotification(alert).catch(()=>{});return alert} module.exports={createRoadAlert};

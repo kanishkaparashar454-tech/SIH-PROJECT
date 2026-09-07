@@ -1,0 +1,4 @@
+const { query } = require('../config/db');
+const { createRoadAlert } = require('./alertService');
+async function processIncident(i) { const n=i.road_id?{rows:[]}:await query('SELECT id FROM roads WHERE geom IS NOT NULL ORDER BY geom <-> ST_SetSRID(ST_MakePoint($2,$1),4326) LIMIT 1',[i.latitude,i.longitude]); const id=i.road_id||n.rows[0]?.id; if(!id)return null; if(!i.road_id&&i.id)await query('UPDATE incidents SET road_id=$1 WHERE id=$2',[id,i.id]); const status=['landslide','flood','blocked'].includes(String(i.type).toLowerCase())?'blocked':'at-risk'; const u=(await query('UPDATE roads SET status=$1,updated_at=NOW() WHERE id=$2 RETURNING *',[status,id])).rows[0]; if(u)await createRoadAlert(u,`Road ${u.name} marked ${status} after ${i.type} report`); return u; }
+module.exports={processIncident};

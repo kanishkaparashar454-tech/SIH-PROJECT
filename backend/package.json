@@ -1,0 +1,26 @@
+{
+  "name": "ner-logistics-platform-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-based smart logistics and accessibility intelligence platform for NER",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "import:osm": "node scripts/import-geojson.js",
+    "gps:sim": "node scripts/gps-simulator.js",
+    "db:setup": "node scripts/setup-database.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "bcryptjs": "^2.4.3"
+  }
+}
