@@ -1,4 +1,3 @@
-// Local development and Render use the same origin. After deploying the API
-// to Vercel, replace "/api" with its public API URL, for example:
-// window.NER_API_BASE = "https://ner-logistics-api.vercel.app/api";
-window.NER_API_BASE = "/api";
+// Production dashboard API endpoint. For local development, temporarily
+// change this back to "/api" while the backend runs on localhost:3000.
+window.NER_API_BASE = "https://ner-logistics-api.vercel.app/api";
